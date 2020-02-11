@@ -9,7 +9,7 @@ This is a billing tool built for small businesses.
   
 ### Screenshots
 #### Main Screen
-![Main Page](https://github.com/shakeelansari63/small_biller/tree/master/PyQt5/screenshots/1-main.png)
+![Main Page](https://github.com/shakeelansari63/small_biller/blob/master/PyQt5/screenshots/1-main.png)
   
 #### Inventory Tab
 ![Inventory Page](https://github.com/shakeelansari63/small_biller/tree/master/PyQt5/screenshots/2-inventory.png)
