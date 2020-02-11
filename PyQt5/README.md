@@ -21,4 +21,4 @@ This is a billing tool built for small businesses.
 ![Save Bill](https://github.com/shakeelansari63/small_biller/blob/master/PyQt5/screenshots/4-savebill.png)
   
 #### Saved Bill Spreadsheet
-![Save Bill](https://github.com/shakeelansari63/small_biller/blob/master/PyQt5/screenshots/5-billinspreadsheet.png)
+![Save Bill](https://github.com/shakeelansari63/small_biller/blob/master/PyQt5/screenshots/5-biilinspreadsheet.png)
