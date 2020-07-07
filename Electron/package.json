@@ -7,7 +7,7 @@
         "rebuild": "electron-rebuild -f -w sqlite3"
     },
     "dependencies": {
-        "electron": ">= 6.0.0",
+        "electron": ">= 7.2.4",
         "sqlite3": "latest"
     },
     "author": "Shakeel Ansari",
