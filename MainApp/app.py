@@ -33,6 +33,9 @@ class App(qt.QTabWidget):
         self.addTab(BillWin(), 'Billing')
         self.addTab(AdminWin(), 'Inventory')
 
+        # Maximised Window
+        self.showMaximized()
+
         # Show window
         self.show()
         sys.exit(self.app.exec_())

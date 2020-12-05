@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets as qt
 from PyQt5 import QtGui as gui
 from PyQt5 import QtCore as core
-from .db import Bill, Inventory
+from .db import BillHist
 
 
 class BillWin(qt.QWidget):
@@ -10,8 +10,7 @@ class BillWin(qt.QWidget):
         super().__init__()
 
         # Build Database Object for Bill
-        self.inv = Inventory()
-        self.bill = Bill()
+        self.bill = BillHist()
 
         # Build Window
         self.build_ui()
