@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets as qt
 from PyQt5 import QtGui as gui
 from PyQt5 import QtCore as core
-from .bill import BillWin
+from .billhst import BillHistWin
 from .admin import AdminWin
 from .setting import setting
 from qtmodern import styles as mstyle
@@ -30,8 +30,8 @@ class App(qt.QTabWidget):
         self.setWindowIcon(gui.QIcon(setting['appicon']))
 
         # Apply Tables
-        self.addTab(BillWin(), 'Billing')
-        self.addTab(AdminWin(), 'Inventory')
+        self.addTab(BillHistWin(), '   My Billing   ')
+        self.addTab(AdminWin(), '   My Inventory   ')
 
         # Maximised Window
         self.showMaximized()

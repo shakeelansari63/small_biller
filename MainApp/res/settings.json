@@ -1,5 +1,7 @@
 {
     "appname": "Maharashtra Decorations",
     "appicon": "res/icon.png",
-    "appdb": "res/biller.db"
+    "appdb": "res/biller.db",
+    "delbtn": "res/delete.png",
+    "updbtn": "res/update.png"
 }

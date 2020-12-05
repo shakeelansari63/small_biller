@@ -5,6 +5,7 @@ from .db import Inventory
 from .setup import AdminSetup
 from functools import partial
 from .alert import MsgErrBox, MsgSucBox
+from .setting import setting
 
 
 class AdminWin(qt.QWidget):
@@ -64,6 +65,13 @@ class AdminWin(qt.QWidget):
         # Remove Focus/Selection Policy
         self.invtab.setFocusPolicy(core.Qt.NoFocus)
         self.invtab.setSelectionMode(qt.QTableWidget.NoSelection)
+        # Resize horizontal and vertical length
+        hheader = self.invtab.horizontalHeader()
+        vheader = self.invtab.verticalHeader()
+        hheader.setSectionResizeMode(qt.QHeaderView.ResizeToContents)
+        hheader.setResizeContentsPrecision(20)
+        vheader.setSectionResizeMode(qt.QHeaderView.Fixed)
+        vheader.setDefaultSectionSize(32)
         # Update Table
         self.get_new_items()
 
@@ -131,60 +139,61 @@ class AdminWin(qt.QWidget):
         # Add Header row
         bold_font = gui.QFont()
         bold_font.setBold(True)
-        itm_id = qt.QLabel('Item Id  ')
+        itm_id = qt.QLabel('Item Id   ')
         itm_id.setFont(bold_font)
-        itm_nm = qt.QLabel('Item Name  ')
+        itm_nm = qt.QLabel('Item Name   ')
         itm_nm.setFont(bold_font)
-        itm_cs = qt.QLabel('Item Cost  ')
+        itm_cs = qt.QLabel('Item Cost   ')
         itm_cs.setFont(bold_font)
-        itm_upd_cs = qt.QLabel('Update Cost  ')
+        itm_upd_cs = qt.QLabel('Update Cost   ')
         itm_upd_cs.setFont(bold_font)
-        itm_dl = qt.QLabel('Delete Item  ')
-        itm_dl.setFont(bold_font)
 
-        self.invtab.setCellWidget(0, 0, itm_id)
-        self.invtab.setCellWidget(0, 1, itm_nm)
-        self.invtab.setCellWidget(0, 2, itm_cs)
-        self.invtab.setCellWidget(0, 3, itm_upd_cs)
-        self.invtab.setSpan(0, 3, 1, 2)
-        self.invtab.setCellWidget(0, 5, itm_dl)
+        self.invtab.setCellWidget(0, 1, itm_id)
+        self.invtab.setCellWidget(0, 2, itm_nm)
+        self.invtab.setCellWidget(0, 3, itm_cs)
+        self.invtab.setCellWidget(0, 4, itm_upd_cs)
+        self.invtab.setSpan(0, 4, 1, 2)
 
         # Add items
         if item_list:
             for row_num, (item_id, item_name, item_cost) in enumerate(item_list, start=1):
+                del_itm = qt.QPushButton('  ')
+                del_itm.setIcon(gui.QIcon(setting['delbtn']))
+                del_itm.setFlat(True)
+                del_itm.clicked.connect(partial(self.del_item_fromdb, item_id))
+
                 self.invtab.setCellWidget(
-                    row_num, 0, qt.QLabel(str(item_id) + '  ')
+                    row_num, 0, del_itm
                 )
 
                 self.invtab.setCellWidget(
-                    row_num, 1, qt.QLabel(str(item_name) + '  ')
+                    row_num, 1, qt.QLabel(str(item_id) + '   ')
                 )
 
                 self.invtab.setCellWidget(
-                    row_num, 2, qt.QLabel(str(item_cost) + '  ')
+                    row_num, 2, qt.QLabel(str(item_name) + '   ')
+                )
+
+                self.invtab.setCellWidget(
+                    row_num, 3, qt.QLabel(str(item_cost) + '   ')
                 )
 
                 new_cost = qt.QLineEdit()
                 new_cost.setPlaceholderText('New Cost')
                 new_cost.setValidator(self.item_cost_vald)
                 save_cost = qt.QPushButton('Save New Cost')
+                save_cost.setIcon(gui.QIcon(setting['updbtn']))
+                # save_cost.setFlat(True)
                 save_cost.clicked.connect(partial(
                     self.save_new_cost, item_id, new_cost
                 ))
 
                 self.invtab.setCellWidget(
-                    row_num, 3, new_cost
+                    row_num, 4, new_cost
                 )
 
                 self.invtab.setCellWidget(
-                    row_num, 4, save_cost
-                )
-
-                del_itm = qt.QPushButton('Delete')
-                del_itm.clicked.connect(partial(self.del_item_fromdb, item_id))
-
-                self.invtab.setCellWidget(
-                    row_num, 5, del_itm
+                    row_num, 5, save_cost
                 )
 
         # Refresh Table
