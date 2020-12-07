@@ -198,7 +198,6 @@ class BillWin(qt.QDialog):
         self.setLayout(self.main)
 
     def open(self):
-
         # Set Window Title and Icon
         self.setWindowIcon(gui.QIcon(setting['appicon']))
         self.setWindowTitle('New Bill')
