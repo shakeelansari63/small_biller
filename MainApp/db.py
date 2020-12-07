@@ -81,6 +81,14 @@ class Inventory(BaseDB):
 
         return self.runsql(sql)
 
+    def get_all_items(self):
+        sql = """SELECT
+        ITEM_ID, ITEM_NAME, ITEM_COST
+        FROM INVENTORY
+        ORDER BY ITEM_ID DESC"""
+
+        return self.runsql(sql)
+
     def get_item_by_name_pattern(self, pattern):
         sql = """SELECT
         ITEM_ID, ITEM_NAME, ITEM_COST
@@ -143,7 +151,7 @@ class Bill(BaseDB):
     def get_items(self):
         sql = """SELECT LISTING_ID, ITEM_NAME, UNIT_ITEM_COST, ITEM_QUANTITY, NO_OF_DAYS
         FROM CURRENT_BILL
-        ORDER BY LISTING_ID"""
+        ORDER BY LISTING_ID DESC"""
         rows = self.runsql(sql)
         return rows
 
@@ -163,7 +171,10 @@ class BillHist(BaseDB):
             CUSTOMER_PHONE TEXT,
             DELIVERY_ADDRESS TEXT,
             ITEMS TEXT,
+            CGST REAL,
+            SGST REAL,
             TOTAL_BILL_AMT REAL,
+            TOTAL_BILL_AMT_WITH_GST REAL,
             DELIVERY_DATE DATETIME,
             UPDATE_DATE DATETIME
         )"""
@@ -175,42 +186,59 @@ class BillHist(BaseDB):
 
         self.runsql(sql)
 
-    def save_bill(self, cust_name, cust_phone, dlvry_addr, items, total_bill_amt, dlvry_date):
+    def save_bill(self, cust_name, cust_phone, dlvry_addr, items, cgst, sgst, total_bill_amt,
+                  total_bill_amt_with_gst, dlvry_date):
+
+        new_bill_id = self.runsql(
+            "SELECT COALESCE(MAX(BILL_ID), 0) + 1 FROM BILL_HIST")[0][0]
+
         sql = """INSERT INTO BILL_HIST(
             BILL_ID,
             CUSTOMER_NAME,
             CUSTOMER_PHONE,
             DELIVERY_ADDRESS,
             ITEMS,
+            CGST,
+            SGST,
             TOTAL_BILL_AMT,
+            TOTAL_BILL_AMT_WITH_GST,
             DELIVERY_DATE,
             UPDATE_DATE
-        ) SELECT
-            COALESCE(MAX(BILL_ID), 0) + 1,
+        ) VALUES (
+             {} ,
             '{}',
             '{}',
             '{}',
             '{}',
              {} ,
+             {} ,
+             {} ,
+             {} ,
             '{}',
             '{}'
-          FROM BILL_HIST""".format(cust_name, cust_phone, dlvry_addr, items,
-                                   total_bill_amt, dlvry_date, datetime.now())
+          )""".format(new_bill_id, cust_name, cust_phone, dlvry_addr, items, cgst, sgst,
+                      total_bill_amt, total_bill_amt_with_gst, dlvry_date, datetime.now())
 
         self.runsql(sql)
 
-    def update_bill(self, bill_id, cust_name, cust_phone, dlvry_addr, items, total_bill_amt, dlvry_date):
+        return new_bill_id
+
+    def update_bill(self, bill_id, cust_name, cust_phone, dlvry_addr, items,
+                    cgst, sgst, total_bill_amt, total_bill_amt_with_gst, dlvry_date):
         sql = """UPDATE BILL_HIST
             SET CUSTOMER_NAME = '{}',
                 CUSTOMER_PHONE = '{}',
                 DELIVERY_ADDRESS = '{}',
                 ITEMS = '{}',
+                CGST = {},
+                SGST = {},
                 TOTAL_BILL_AMT = {},
+                TOTAL_BILL_AMT_WITH_GST = {},
                 DELIVERY_DATE = '{}',
                 UPDATE_DATE = '{}'
             WHERE BILL_ID = {}
-        """.format(cust_name, cust_phone, dlvry_addr, items,
-                   total_bill_amt, dlvry_date, datetime.now(), bill_id)
+        """.format(cust_name, cust_phone, dlvry_addr, items, cgst, sgst,
+                   total_bill_amt, total_bill_amt_with_gst, dlvry_date, datetime.now(), bill_id)
 
         self.runsql(sql)
 
@@ -227,7 +255,10 @@ class BillHist(BaseDB):
             CUSTOMER_PHONE,
             DELIVERY_ADDRESS,
             ITEMS,
+            CGST,
+            SGST,
             TOTAL_BILL_AMT,
+            TOTAL_BILL_AMT_WITH_GST, 
             DELIVERY_DATE,
             UPDATE_DATE
         FROM BILL_HIST
@@ -242,7 +273,10 @@ class BillHist(BaseDB):
             CUSTOMER_PHONE,
             DELIVERY_ADDRESS,
             ITEMS,
+            CGST,
+            SGST,
             TOTAL_BILL_AMT,
+            TOTAL_BILL_AMT_WITH_GST, 
             DELIVERY_DATE,
             UPDATE_DATE
         FROM BILL_HIST

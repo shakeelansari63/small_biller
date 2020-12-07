@@ -120,7 +120,7 @@ class BillHistWin(qt.QWidget):
 
         # Add Row Data
         if bills:
-            for r_num, (bill_id, cust_name, cust_phone, del_addr, bill_amt, del_date, upd_date) in enumerate(bills, start=1):
+            for r_num, (bill_id, cust_name, cust_phone, del_addr, _, _, _, _, bill_w_gst,  del_date, upd_date) in enumerate(bills, start=1):
                 del_itm = qt.QPushButton('  ')
                 del_itm.setIcon(gui.QIcon(setting['delbtn']))
                 del_itm.setFlat(True)
@@ -146,7 +146,7 @@ class BillHistWin(qt.QWidget):
                 )
 
                 self.billtbl.setCellWidget(
-                    r_num, 5, qt.QLabel(str(bill_amt) + '   ')
+                    r_num, 5, qt.QLabel(str(bill_w_gst) + '   ')
                 )
 
                 self.billtbl.setCellWidget(
@@ -188,8 +188,8 @@ class BillHistWin(qt.QWidget):
         self.refresh_table()
 
     def see_bill(self, bill_id):
-        bill = BillWin()
-        bill.open(bill_id)
+        bill = BillWin(bill_id)
+        bill.open()
 
     def export_xls(self, bill_id):
         pass

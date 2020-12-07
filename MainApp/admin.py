@@ -71,7 +71,7 @@ class AdminWin(qt.QWidget):
         hheader.setSectionResizeMode(qt.QHeaderView.ResizeToContents)
         hheader.setResizeContentsPrecision(20)
         vheader.setSectionResizeMode(qt.QHeaderView.Fixed)
-        vheader.setDefaultSectionSize(32)
+        vheader.setDefaultSectionSize(36)
         # Update Table
         self.get_new_items()
 
@@ -102,7 +102,7 @@ class AdminWin(qt.QWidget):
         self.item_cost_vald = gui.QRegExpValidator(item_cost_re)
 
     def add_to_inventory(self):
-        new_item_name = self.new_item_name.text()
+        new_item_name = self.new_item_name.text().replace("'", "''")
         new_item_cost = self.new_item_cost.text()
 
         if new_item_name != '' and new_item_name is not None \

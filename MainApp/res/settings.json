@@ -3,5 +3,7 @@
     "appicon": "res/icon.png",
     "appdb": "res/biller.db",
     "delbtn": "res/delete.png",
-    "updbtn": "res/update.png"
+    "updbtn": "res/update.png",
+    "cgst": "5",
+    "sgst": "5"
 }
