@@ -49,6 +49,7 @@ class BillWin(qt.QDialog):
 
         self.delv_addr = qt.QTextEdit()
         self.delv_addr.setPlaceholderText('Delivery Address')
+        self.delv_addr.setTabChangesFocus(True)
 
         self.delv_date = qt.QDateEdit()
         self.delv_date.setDate(date.today())
