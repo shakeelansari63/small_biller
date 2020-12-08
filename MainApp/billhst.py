@@ -5,6 +5,9 @@ from .db import BillHist
 from .setting import setting
 from functools import partial
 from .bill import BillWin
+import json
+from .alert import MsgErrBox
+import xlsxwriter as xl
 
 
 class BillHistWin(qt.QWidget):
@@ -192,8 +195,119 @@ class BillHistWin(qt.QWidget):
         bill.open()
 
     def export_xls(self, bill_id):
-        pass
+        # Get Bill data
+        bill_data = self.bill.get_bill_by_id(bill_id)
+
+        if bill_data:
+            # Unpack Data
+            (_, cust_name, cust_phone, delv_addr, items,
+             cgst, sgst, tot_bill, tot_bill_w_gst, delv_date, _) = bill_data[0]
+
+        bill_items = json.loads(items)
+
+        if bill_items:
+            # Open dialog to get file name
+            xl_file = self.file_dialog()
+
+            # Check if Excel file is not empty
+            if xl_file:
+                # Apend File extension if not provided
+                if not xl_file.lower().endswith('.xlsx'):
+                    xl_file = xl_file + '.xlsx'
+
+                # Open file for editting
+                with xl.Workbook(xl_file) as wb:
+                    # Add Wroksheet
+                    ws = wb.add_worksheet()
+
+                    # Predefine formats
+                    company_name_format = wb.add_format({'bold': True,
+                                                         'font_color': 'red', 'font_size': 18,
+                                                         'border': 1, 'align': 'center', 'bg_color': 'yellow'
+                                                         })
+                    total_bill_format = wb.add_format({'bold': True, 'font_color': 'blue',
+                                                       'border': 1})
+                    head_format = wb.add_format({'bold': True, 'border': 1,
+                                                 'bg_color': '#A0A0A0'})
+                    data_format = wb.add_format({'border': 1})
+
+                    # Set Column Width
+                    ws.set_column(0, 0, 30)  # 0-0 column width is 30
+                    ws.set_column(1, 4, 15)  # 1-4 columns width is 15
+
+                    # Company Name Header
+                    ws.merge_range(0, 0, 0, 4,
+                                   setting['appname'], company_name_format)
+
+                    # Customer and order details
+                    ws.merge_range(1, 0, 1, 2, "Customer Name", head_format)
+                    ws.merge_range(1, 3, 1, 4, cust_name, data_format)
+
+                    ws.merge_range(2, 0, 2, 2, "Customer Phone", head_format)
+                    ws.merge_range(2, 3, 2, 4, cust_phone, data_format)
+
+                    ws.merge_range(3, 0, 3, 2, "Delivery Address", head_format)
+                    ws.merge_range(3, 3, 3, 4, delv_addr, data_format)
+
+                    ws.merge_range(4, 0, 4, 2, "Delivery Date", head_format)
+                    ws.merge_range(4, 3, 4, 4, delv_date, data_format)
+
+                    # 1 Row gap
+                    ws.merge_range(5, 0, 5, 4, "", data_format)
+
+                    ws.write(6, 0, "Name", head_format)
+                    ws.write(6, 1, "Unit Price", head_format)
+                    ws.write(6, 2, "Quantity", head_format)
+                    ws.write(6, 3, "Number of Days", head_format)
+                    ws.write(6, 4, "Total Price", head_format)
+
+                    # Counter for further rows
+                    cnt = 7
+
+                    for rnum, (_, itm_name, itm_cost, itm_qty, no_days) in enumerate(bill_items):
+                        # Calculate total Price
+                        tot_price = float(itm_cost) * \
+                            float(itm_qty) * float(no_days)
+                        # Write data in sheet
+                        ws.write(rnum + 7, 0, itm_name, data_format)
+                        ws.write(rnum + 7, 1, itm_cost, data_format)
+                        ws.write(rnum + 7, 2, itm_qty, data_format)
+                        ws.write(rnum + 7, 3, no_days, data_format)
+                        ws.write(rnum + 7, 4, str(tot_price), data_format)
+
+                        # Increment COunter
+                        cnt += 1
+                    # 1 Row gap
+                    ws.merge_range(cnt, 0, cnt, 4, "", data_format)
+
+                    # Other Bill Details
+                    ws.merge_range(cnt + 1, 0, cnt + 1, 2,
+                                   "Bill Amount", head_format)
+                    ws.merge_range(cnt + 1, 3, cnt + 1, 4,
+                                   tot_bill, data_format)
+
+                    ws.merge_range(cnt + 2, 0, cnt + 2, 2, "SGST", head_format)
+                    ws.merge_range(cnt + 2, 3, cnt + 2, 4, sgst, data_format)
+
+                    ws.merge_range(cnt + 3, 0, cnt + 3, 2, "CGST", head_format)
+                    ws.merge_range(cnt + 3, 3, cnt + 3, 4, cgst, data_format)
+
+                    ws.merge_range(cnt + 4, 0, cnt + 4, 2, "Total Bill With GST",
+                                   head_format)
+                    ws.merge_range(cnt + 4, 3, cnt + 4, 4, tot_bill_w_gst,
+                                   total_bill_format)
+
+        else:
+            MsgErrBox('Bill is Empty')
 
     def create_new_bill(self):
         bill = BillWin()
         bill.open()
+
+    def file_dialog(self):
+        options = qt.QFileDialog.Options()
+        options |= qt.QFileDialog.DontUseNativeDialog
+        file_name, _ = qt.QFileDialog.getSaveFileName(self, "Save as Excel Sheet",
+                                                      "", "MS Excel Files (*.xlsx);;All Files (*)",
+                                                      options=options)
+        return file_name
