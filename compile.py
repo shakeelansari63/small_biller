@@ -32,10 +32,6 @@ def compile_package(packagename):
     import qtmodern
     qtm_path = os.path.dirname(os.path.abspath(qtmodern.__file__))
 
-    # For importing XLSX Writer
-    import xlsxwriter
-    xls_path = os.path.dirname(os.path.abspath(xlsxwriter.__file__))
-
     # Set Logo File
     platformid = sys.platform
     if platformid == 'linux' or platformid == 'darwin':
@@ -48,15 +44,14 @@ def compile_package(packagename):
     pybuild([
         "{}/main.py".format(appth),
         "--clean",
-        "--log-level=DEBUG",
+        "--log-level=INFO",
         "--onedir",
         "--name={}".format(packagename),
         "--hidden-import=qtmodern",
         "--hidden-import=xlsxwriter",
         "--add-data={}/pycs{}./MainApp".format(appth, sep),
         "--add-data={}/MainApp/res{}./MainApp/res".format(appth, sep),
-        "--add-data={}{}./qtmodern".format(qtm_path, sep),
-        "--add-data={}{}./xlsxwriter".format(xls_path, sep),
+        "--add-data={}/resources{}./qtmodern/resources".format(qtm_path, sep),
         "--windowed",
         "--icon={}".format(logofile)
     ])
