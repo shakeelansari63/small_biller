@@ -1,7 +1,12 @@
 # Small Biller
 This is a billing software for small scale business
 
-## Tech Specs
- - Python + Tkinter (see Tkinter folder)
- - Python + Qt5 (see PyQt5 folder)
- - Electron JS (see Electron folder // Under Development)
+## Building Dependencies
+```
+python setup.py install
+```
+
+## Compiling the Project to Target Environment
+```
+python compile.py
+```

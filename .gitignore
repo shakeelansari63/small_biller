@@ -4,3 +4,13 @@
 __pycache__
 **/*.db
 **/node_modules
+
+
+# Ignore Build and Dist directory
+build/
+dist/
+**/__pycache__/
+
+# Ignore Generated Packages
+*.tar.gz
+*.zip
