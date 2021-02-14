@@ -83,3 +83,4 @@ def compile_package(packagename):
 
 if __name__ == '__main__':
     compile_package('SmallBiller')
+    print('Code compiled successfully')
