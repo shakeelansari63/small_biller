@@ -65,7 +65,7 @@ class BillWin(qt.QDialog):
         self.sgst.setText(setting['sgst'])
 
         self.itm_name = qt.QComboBox()
-        self.itm_name.setPlaceholderText('Select Item')
+        #self.itm_name.setPlaceholderText('Select Item')
         self.itm_name.setValidator(self.name_vald)
         self.populate_bill_item_names()
 
